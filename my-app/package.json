@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --open",
-    "build": "vite build --base=/~kaarleh/React/navigation/",
+    "build": "vite build --base=/~kaarleh/React/forms/",
     "preview": "vite preview"
   },
   "dependencies": {
