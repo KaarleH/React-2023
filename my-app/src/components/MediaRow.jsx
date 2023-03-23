@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import {mediaUrl} from "../utils/variables.js";
+import {mediaUrl} from '../utils/variables';
 
 const MediaRow = ({file}) => {
   return (

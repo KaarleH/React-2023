@@ -1,8 +1,12 @@
+import PropTypes from 'prop-types';
+import {useEffect, useState} from 'react';
+import {useMedia} from '../hooks/apiHooks';
+import {baseUrl} from '../utils/variables';
 import MediaRow from './MediaRow';
-import {useMedia} from "../hooks/ApiHooks.js";
 
 const MediaTable = () => {
   const {mediaArray} = useMedia();
+
   return (
     <table>
       <tbody>
@@ -14,8 +18,6 @@ const MediaTable = () => {
   );
 };
 
-MediaTable.propTypes = {
-
-};
+MediaTable.propTypes = {};
 
 export default MediaTable;
