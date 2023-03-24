@@ -40,4 +40,18 @@ const useMedia = () => {
   return {mediaArray};
 };
 
-export {useMedia};
+const useUser = () => {
+  const postUser = async (inputs) => {
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(inputs),
+    };
+  return doFetch(baseUrl + 'users', options)
+};
+  return{postUser};
+};
+
+export {useMedia, useUser};
