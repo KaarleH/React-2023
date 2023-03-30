@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
-import useForm from "../hooks/FormHooks.js";
-import {useAuthentication} from "../hooks/ApiHooks.js";
-import {useNavigate} from "react-router-dom";
-
+import {useContext} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {MediaContext} from '../contexts/MediaContext';
+import {useAuthentication} from '../hooks/apiHooks';
+import useForm from '../hooks/FormHooks';
 
 const LoginForm = (props) => {
-
+  const {setUser} = useContext(MediaContext);
   const {postLogin} = useAuthentication();
-
   const navigate = useNavigate();
 
   const initValues = {
@@ -16,12 +16,13 @@ const LoginForm = (props) => {
   };
 
   const doLogin = async () => {
-    try{
+    try {
       const loginResult = await postLogin(inputs);
-      localStorage.setItem('userToken', loginResult.token)
+      localStorage.setItem('userToken', loginResult.token);
+      setUser(loginResult.user);
       navigate('/home');
     } catch (error) {
-      alert(error.message)
+      alert(error.message);
     }
   };
 
