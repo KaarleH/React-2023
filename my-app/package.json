@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build --base=/~ilkkamtk/mpjakk23/forms/",
+    "build": "vite build --base=/~kaarleh/React/forms/",
     "preview": "vite preview"
   },
   "dependencies": {
