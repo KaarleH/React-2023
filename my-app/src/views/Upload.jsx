@@ -20,10 +20,10 @@ const Upload = (props) => {
   };
 
   const filterInitValues = {
-    brightness: 50,
-    contrast: 50,
-    saturation: 50,
-    sepia: 50,
+    brightness: 100,
+    contrast: 100,
+    saturation: 100,
+    sepia: 0,
 
   }
 
@@ -31,7 +31,13 @@ const Upload = (props) => {
     try {
       const data = new FormData();
       data.append('title', inputs.title);
-      data.append('description', inputs.description);
+
+      const allData = {
+        desc: inputs.description,
+        filters: filterInputs,
+      }
+
+      data.append('description', JSON.stringify(allData));
       data.append('file', file);
       const userToken = localStorage.getItem('userToken');
       const uploadResult = await postMedia(data, userToken);
@@ -98,7 +104,7 @@ const Upload = (props) => {
         name="brightness"
         step={1}
         min={0}
-        max={100}
+        max={200}
         valueLabelDisplay="auto"
         onChange={handleFilterChange}
         value={filterInputs.brightness}
@@ -107,7 +113,7 @@ const Upload = (props) => {
         name="contrast"
         step={1}
         min={0}
-        max={100}
+        max={200}
         valueLabelDisplay="auto"
         onChange={handleFilterChange}
         value={filterInputs.contrast}
@@ -116,7 +122,7 @@ const Upload = (props) => {
         name="saturation"
         step={1}
         min={0}
-        max={100}
+        max={200}
         valueLabelDisplay="auto"
         onChange={handleFilterChange}
         value={filterInputs.saturation}
