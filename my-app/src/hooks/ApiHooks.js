@@ -46,7 +46,7 @@ const useMedia = () => {
       body: data,
     };
     return await doFetch(baseUrl + 'media', options);
-  }
+  };
 
   return {mediaArray, postMedia};
 };

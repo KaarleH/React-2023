@@ -1,15 +1,17 @@
-import {Box, Button, Slider, Stack} from '@mui/material';
+import {Box, Button, Slider} from '@mui/material';
+import PropTypes from 'prop-types';
 import useForm from '../hooks/FormHooks';
 import {useState} from 'react';
-import {useMedia, useTag} from '../hooks/ApiHooks';
 import {useNavigate} from 'react-router-dom';
-import {appId} from "../utils/variables.js";
+import {appId} from '../utils/variables';
+import {useMedia, useTag} from '../hooks/ApiHooks';
 
 const Upload = (props) => {
   const [file, setFile] = useState(null);
   const [selectedImage, setSelectedImage] = useState(
     'https://placekitten.com/600/400'
   );
+  // 'https://placehold.co/600x400?text=Choose-media'
   const {postMedia} = useMedia();
   const {postTag} = useTag();
   const navigate = useNavigate();
@@ -24,25 +26,28 @@ const Upload = (props) => {
     contrast: 100,
     saturation: 100,
     sepia: 0,
-
-  }
+  };
 
   const doUpload = async () => {
     try {
       const data = new FormData();
       data.append('title', inputs.title);
-
       const allData = {
         desc: inputs.description,
         filters: filterInputs,
-      }
-
+      };
       data.append('description', JSON.stringify(allData));
       data.append('file', file);
       const userToken = localStorage.getItem('userToken');
       const uploadResult = await postMedia(data, userToken);
-      const tagResult = await postTag({file_id: uploadResult.file_id, tag: appId}, userToken);
-      console.log('doUpload', uploadResult);
+      const tagResult = await postTag(
+        {
+          file_id: uploadResult.file_id,
+          tag: appId,
+        },
+        userToken
+      );
+      console.log('doUpload', tagResult);
       navigate('/home');
     } catch (error) {
       alert(error.message);
@@ -56,7 +61,7 @@ const Upload = (props) => {
     reader.addEventListener('load', () => {
       setSelectedImage(reader.result);
     });
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(event.target.files[0]);
   };
 
   const {inputs, handleSubmit, handleInputChange} = useForm(
@@ -64,21 +69,30 @@ const Upload = (props) => {
     initValues
   );
 
-  const {inputs: filterInputs, handleInputChange: handleFilterChange} = useForm(null, filterInitValues);
-  //console.log('Upload', inputs, file);
+  const {inputs: filterInputs, handleInputChange: handleFilterChange} = useForm(
+    null,
+    filterInitValues
+  );
+
+  console.log('Upload', file);
 
   return (
     <Box>
-      <img src={selectedImage} alt="preview" style={{
-        width: 300,
-        height: 300,
-        filter: `
-        brightness(${filterInputs.brightness}%)
-        contrast(${filterInputs.contrast}%)
-        saturate(${filterInputs.saturation}%)
-        sepia(${filterInputs.sepia}%)
-        `,
-      }} />
+      <img
+        src={selectedImage}
+        alt="preview"
+        style={{
+          width: '100%',
+          height: 400,
+          objectFit: 'contain',
+          filter: `
+          brightness(${filterInputs.brightness}%)
+          contrast(${filterInputs.contrast}%)
+          saturate(${filterInputs.saturation}%)
+          sepia(${filterInputs.sepia}%)
+          `,
+        }}
+      />
       <form onSubmit={handleSubmit}>
         <input
           onChange={handleInputChange}
@@ -99,44 +113,42 @@ const Upload = (props) => {
         ></input>
         <Button type="submit">Upload</Button>
       </form>
-      <Stack>
       <Slider
         name="brightness"
-        step={1}
         min={0}
         max={200}
+        step={1}
         valueLabelDisplay="auto"
         onChange={handleFilterChange}
         value={filterInputs.brightness}
       />
       <Slider
         name="contrast"
-        step={1}
         min={0}
         max={200}
+        step={1}
         valueLabelDisplay="auto"
         onChange={handleFilterChange}
         value={filterInputs.contrast}
       />
       <Slider
         name="saturation"
-        step={1}
         min={0}
         max={200}
+        step={1}
         valueLabelDisplay="auto"
         onChange={handleFilterChange}
         value={filterInputs.saturation}
       />
       <Slider
         name="sepia"
-        step={1}
         min={0}
         max={100}
+        step={1}
         valueLabelDisplay="auto"
         onChange={handleFilterChange}
         value={filterInputs.sepia}
       />
-      </Stack>
     </Box>
   );
 };
