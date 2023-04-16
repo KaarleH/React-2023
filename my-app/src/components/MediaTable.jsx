@@ -1,24 +1,24 @@
 import {ImageList} from '@mui/material';
 import PropTypes from 'prop-types';
-import {useEffect, useState} from 'react';
 import {useMedia} from '../hooks/ApiHooks';
 import {useWindowSize} from '../hooks/WindowHooks';
-import {baseUrl} from '../utils/variables';
 import MediaRow from './MediaRow';
 
-const MediaTable = () => {
-  const {mediaArray} = useMedia();
+const MediaTable = ({myFilesOnly = false}) => {
+  const {mediaArray, deleteMedia} = useMedia(myFilesOnly);
   const windowSize = useWindowSize();
 
   return (
     <ImageList cols={windowSize.width > 768 ? 3 : 2} gap={8}>
       {mediaArray.map((item, index) => {
-        return <MediaRow key={index} file={item} />;
+        return <MediaRow key={index} file={item} deleteMedia={deleteMedia} />;
       })}
     </ImageList>
   );
 };
 
-MediaTable.propTypes = {};
+MediaTable.propTypes = {
+  myFilesOnly: PropTypes.bool,
+};
 
 export default MediaTable;

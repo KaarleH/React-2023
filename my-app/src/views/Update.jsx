@@ -1,70 +1,61 @@
 import {Box, Button, Slider} from '@mui/material';
 import useForm from '../hooks/FormHooks';
-import {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {appId} from '../utils/variables';
-import {useMedia, useTag} from '../hooks/ApiHooks';
+import {useLocation, useNavigate} from 'react-router-dom';
+import {mediaUrl} from '../utils/variables';
+import {useMedia} from '../hooks/ApiHooks';
 
-const Upload = () => {
-  const [file, setFile] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(
-    'https://placekitten.com/600/400'
-  );
-  // 'https://placehold.co/600x400?text=Choose-media'
-  const {postMedia} = useMedia();
-  const {postTag} = useTag();
+const Update = () => {
+  const {putMedia} = useMedia();
   const navigate = useNavigate();
+  const {state} = useLocation();
+  const file = state.file;
+
+  const selectedImage = mediaUrl + file.filename;
+
+  let allData = {
+    desc: file.description,
+    filters: {
+      brightness: 100,
+      contrast: 100,
+      saturation: 100,
+      sepia: 0,
+    },
+  };
+  try {
+    allData = JSON.parse(file.description);
+  } catch (error) {
+    /* empty */
+  }
 
   const initValues = {
-    title: '',
-    description: '',
+    title: file.title,
+    description: allData.desc,
   };
 
-  const filterInitValues = {
-    brightness: 100,
-    contrast: 100,
-    saturation: 100,
-    sepia: 0,
-  };
+  const filterInitValues = allData.filters;
 
-  const doUpload = async () => {
+  const doUpdate = async () => {
     try {
-      const data = new FormData();
-      data.append('title', inputs.title);
       const allData = {
         desc: inputs.description,
         filters: filterInputs,
       };
-      data.append('description', JSON.stringify(allData));
-      data.append('file', file);
+      const data = {
+        title: inputs.title,
+        description: JSON.stringify(allData),
+      };
+
       const userToken = localStorage.getItem('userToken');
-      const uploadResult = await postMedia(data, userToken);
-      const tagResult = await postTag(
-        {
-          file_id: uploadResult.file_id,
-          tag: appId,
-        },
-        userToken
-      );
-      console.log('doUpload', tagResult);
+      const updateResult = await putMedia(file.file_id, data, userToken);
+      console.log('doUpdate', updateResult);
       navigate('/home');
     } catch (error) {
       alert(error.message);
     }
   };
 
-  const handleFileChange = (event) => {
-    event.persist();
-    setFile(event.target.files[0]);
-    const reader = new FileReader();
-    reader.addEventListener('load', () => {
-      setSelectedImage(reader.result);
-    });
-    reader.readAsDataURL(event.target.files[0]);
-  };
-
   const {inputs, handleSubmit, handleInputChange} = useForm(
-    doUpload,
+    doUpdate,
     initValues
   );
 
@@ -72,8 +63,6 @@ const Upload = () => {
     null,
     filterInitValues
   );
-
-  console.log('Upload', file);
 
   return (
     <Box>
@@ -104,12 +93,6 @@ const Upload = () => {
           name="description"
           value={inputs.description}
         ></textarea>
-        <input
-          onChange={handleFileChange}
-          type="file"
-          name="file"
-          accept="image/*,video/*,audio/*"
-        ></input>
         <Button type="submit">Upload</Button>
       </form>
       <Slider
@@ -152,4 +135,4 @@ const Upload = () => {
   );
 };
 
-export default Upload;
+export default Update;
